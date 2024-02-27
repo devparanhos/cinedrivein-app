@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "480214726258",
+    "project_id": "cinedrive-in",
+    "storage_bucket": "cinedrive-in.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480214726258:android:b015ec5f05548a2fe274eb",
+        "android_client_info": {
+          "package_name": "br.com.renovatiu.cinedrivein"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjaGr0FIQAaybxUcCKZxhuNXO3-nCxWxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

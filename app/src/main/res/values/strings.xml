@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">Cine Drive-in</string>
+
+    <string name="title_create_report">Criar relatório</string>
+    <string name="title_create_session">Criar sessão</string>
+    <string name="title_basic_data">Dados básicos</string>
+    <string name="title_movie_session">Filme da sessão</string>
+    <string name="title_movie_audio">Audio do filme</string>
+    <string name="title_has_subtitle">Com legenda</string>
+    <string name="title_tickets_sold">Venda de ingressos</string>
+    <string name="title_tickets_full">Inteiras</string>
+    <string name="title_tickets_half">Meias</string>
+    <string name="title_has_session">Houve sessão</string>
+    <string name="title_rectifing">Retificando</string>
+    <string name="title_no_report_found">Nenhum relatório cadastrado</string>
+    <string name="title_reports">Relatórios</string>
+
+    <string name="label_report_date">Data do relatório</string>
+    <string name="label_session_hour">Horário da sessão</string>
+    <string name="label_modality">Modalidade</string>
+    <string name="label_cinema_cnpj">CNPJ do cinema</string>
+    <string name="label_cinema_name">Nome do Cinema</string>
+    <string name="label_movie_code">CPB/ROE</string>
+    <string name="label_title">Título</string>
+    <string name="label_original">Original</string>
+    <string name="label_dubbed">Dublado</string>
+    <string name="label_yes">Sim</string>
+    <string name="label_no">Não</string>
+    <string name="label_distributor_cnpj">CNPJ do distribuidor</string>
+    <string name="label_distributor_name">Nome do distribuidor</string>
+    <string name="label_total_tickets">Quantidade de ingressos</string>
+    <string name="label_quantity">Quantidade</string>
+    <string name="label_value">Valor</string>
+
+    <string name="placeholder_hour">ex: 18:30</string>
+    <string name="placeholder_movie_code">ex: E2300084100000</string>
+    <string name="placeholder_title">ex: Homem-aranha</string>
+    <string name="placeholder_cnpj">ex: 59.320.905/0001-91</string>
+    <string name="placeholder_distributor_name">ex: The Walt Disney Company (Brasil) Ltda</string>
+    <string name="placeholder_total_tickets">ex: 100</string>
+    <string name="placeholder_quantity">ex: 50</string>
+    <string name="placeholder_value">ex: 500.00</string>
+    <string name="placeholder_date">ex: 20/02/2024</string>
+    <string name="placeholder_select_distributor">Selecione o distribuidor</string>
+
+    <string name="loading_saving_session">Salvando sessão...</string>
+
+    <string name="button_lable_create_report">Criar relatório</string>
+    <string name="button_lable_register">Cadastrar</string>
+</resources>
