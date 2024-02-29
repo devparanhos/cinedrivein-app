@@ -6,6 +6,7 @@ sealed class ListReportAction {
     data class SendReport(val protocol: ProtocolRequest?) : ListReportAction()
     data class ConsultReport(val protocolNumber: String?, val id: String?) : ListReportAction()
     data class GetReportsByDate(val date: String) : ListReportAction()
+    data class DeleteReport(val id: String?) : ListReportAction()
 
     object GetAllProtocols : ListReportAction()
 }

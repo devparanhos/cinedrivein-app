@@ -38,4 +38,8 @@ class SessionRepositoryImpl(
         sessionDao.deleteAll()
     }
 
+    override suspend fun deleteSession(id: Int) {
+        sessionDao.deleteSession(id = id)
+    }
+
 }

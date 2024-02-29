@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +64,7 @@ import br.com.renovatiu.cinedrivein.core.functions.getSelectedDate
 import br.com.renovatiu.cinedrivein.data.remote.model.request.ProtocolRequest
 import br.com.renovatiu.cinedrivein.presentation.components.bottomsheet.ProtocolOptionsBottomSheet
 import br.com.renovatiu.cinedrivein.presentation.components.topbar.DefaultTopBar
+import br.com.renovatiu.cinedrivein.presentation.feature.report.create.action.CreateReportAction
 import br.com.renovatiu.cinedrivein.presentation.feature.report.list.action.ListReportAction
 import br.com.renovatiu.cinedrivein.ui.theme.LightGray
 import br.com.renovatiu.cinedrivein.ui.theme.Primary
@@ -90,6 +92,12 @@ fun ListReportScreen(
         confirmValueChange = { true }
     )
 
+    LaunchedEffect(true) {
+        viewModel.submitAction(
+            action = ListReportAction.GetAllProtocols
+        )
+    }
+
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
@@ -102,6 +110,9 @@ fun ListReportScreen(
                             protocol = protocolSelected
                         )
                     )
+                    coroutineScope.launch {
+                        modalSheetState.hide()
+                    }
                 },
                 onConsultProtocol = {
                     viewModel.submitAction(
@@ -110,6 +121,19 @@ fun ListReportScreen(
                             id = protocolSelected?.id
                         )
                     )
+                    coroutineScope.launch {
+                        modalSheetState.hide()
+                    }
+                },
+                onDeleteReport = {
+                    viewModel.submitAction(
+                        action = ListReportAction.DeleteReport(
+                            id = protocolSelected?.id
+                        )
+                    )
+                    coroutineScope.launch {
+                        modalSheetState.hide()
+                    }
                 }
             )
         }
@@ -191,7 +215,7 @@ fun ListReportScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(id = R.string.button_lable_create_report),
+                                text = stringResource(id = R.string.button_label_create_report),
                                 color = Color.White
                             )
                             Spacer(modifier = Modifier.width(8.dp))

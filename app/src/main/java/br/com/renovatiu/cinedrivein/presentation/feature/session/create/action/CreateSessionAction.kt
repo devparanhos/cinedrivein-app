@@ -1,6 +1,7 @@
 package br.com.renovatiu.cinedrivein.presentation.feature.session.create.action
 
 import br.com.renovatiu.cinedrivein.data.remote.model.request.DistributorRequest
+import br.com.renovatiu.cinedrivein.domain.model.SessionDomain
 
 sealed class CreateSessionAction {
     data class UpdateSessionHour(val hour: String) : CreateSessionAction()
@@ -16,4 +17,5 @@ sealed class CreateSessionAction {
     object UpdateAudio: CreateSessionAction()
     object UpdateSubtitle: CreateSessionAction()
     object CreateSession: CreateSessionAction()
+    data class UpdateSession(val id: Int?): CreateSessionAction()
 }

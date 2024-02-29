@@ -84,4 +84,18 @@ class FirestoreRepositoryImpl(
 
         return distributors
     }
+
+    override suspend fun deleteReport(id: String?) {
+        val protocolRef = firestore.collection("protocols")
+        val query = protocolRef
+            .whereEqualTo("id", id)
+            .get()
+            .await()
+
+        if (query.documents.isNotEmpty()) {
+            for(document in query) {
+                protocolRef.document(document.id).delete().await()
+            }
+        }
+    }
 }

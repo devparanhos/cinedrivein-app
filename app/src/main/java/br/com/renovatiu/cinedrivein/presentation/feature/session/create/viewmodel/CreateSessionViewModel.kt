@@ -8,6 +8,7 @@ import br.com.renovatiu.cinedrivein.core.handler.HandlerRequest
 import br.com.renovatiu.cinedrivein.domain.model.SessionDomain
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.GetAllDistributorsUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.session.CreateSessionUseCase
+import br.com.renovatiu.cinedrivein.domain.usecase.session.DeleteSessionUseCase
 import br.com.renovatiu.cinedrivein.presentation.feature.session.create.action.CreateSessionAction
 import br.com.renovatiu.cinedrivein.presentation.feature.session.create.state.CreateSessionState
 import kotlinx.coroutines.delay
@@ -18,13 +19,15 @@ import kotlinx.coroutines.launch
 
 class CreateSessionViewModel(
     private val createSessionUseCase: CreateSessionUseCase,
-    private val getAllDistributorsUseCase: GetAllDistributorsUseCase
+    private val getAllDistributorsUseCase: GetAllDistributorsUseCase,
+    private val deleteSessionUseCase: DeleteSessionUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateSessionState())
     val state = _state.asStateFlow()
 
     init {
+
         viewModelScope.launch {
             _state.update { it.copy(distributors = getAllDistributorsUseCase.getAll()) }
         }
@@ -84,6 +87,15 @@ class CreateSessionViewModel(
             is CreateSessionAction.CreateSession -> {
                 createSession()
             }
+
+            is CreateSessionAction.UpdateSession -> {
+                viewModelScope.launch {
+                    action.id?.let {
+                        deleteSessionUseCase.delete(it)
+                        createSession()
+                    }
+                }
+            }
         }
     }
 
@@ -133,5 +145,25 @@ class CreateSessionViewModel(
                 }
             }
         }
+    }
+
+    fun updateState(session: SessionDomain) {
+        _state.update {
+            it.copy(
+                sessionHour = session.time,
+                title = session.movieTitle,
+                movieCode = session.movieCode,
+                isOriginalAudio = session.audio == "O",
+                hasSubtitle = session.hasSubtitle == "S",
+                distributorName = session.distributorName,
+                distributorCnpj = session.distributorCnpj,
+                totalTickets = session.totalSeats.toString(),
+                quantityTicketsFull = session.totalFullQuantity.toString(),
+                quantityTicketsHalf = session.totalHalfQuantity.toString(),
+                revenueTicketsHalf = session.totalHalfSold.toString(),
+                revenueTicketsFull = session.totalFullSold.toString()
+            )
+        }
+
     }
 }

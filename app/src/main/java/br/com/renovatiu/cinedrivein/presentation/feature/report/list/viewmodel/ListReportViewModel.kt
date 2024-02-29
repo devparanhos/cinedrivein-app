@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import br.com.renovatiu.cinedrivein.core.extensions.formatDateForQuery
 import br.com.renovatiu.cinedrivein.data.remote.api.service.AncineAPI
 import br.com.renovatiu.cinedrivein.data.remote.model.request.ProtocolRequest
+import br.com.renovatiu.cinedrivein.domain.usecase.firestore.DeleteReportUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.GetAllProtocolUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.UpdateProtocolNumberUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.UpdateProtocolStatusUseCase
@@ -19,15 +20,12 @@ class ListReportViewModel(
     private val ancineAPI: AncineAPI,
     private val getAllProtocolUseCase: GetAllProtocolUseCase,
     private val updateProtocolNumberUseCase: UpdateProtocolNumberUseCase,
-    private val updateProtocolStatusUseCase: UpdateProtocolStatusUseCase
+    private val updateProtocolStatusUseCase: UpdateProtocolStatusUseCase,
+    private val deleteReportUseCase: DeleteReportUseCase
 ): ViewModel() {
 
     private val _state = MutableStateFlow(ListReportState())
     val state = _state.asStateFlow()
-
-    init {
-        getAllProtocols()
-    }
 
     fun submitAction(action: ListReportAction) {
         when(action) {
@@ -59,6 +57,12 @@ class ListReportViewModel(
 
                 getAllProtocols()
             }
+
+            is ListReportAction.DeleteReport -> {
+                deleteProtocol(
+                    id = action.id
+                )
+            }
         }
     }
 
@@ -84,7 +88,6 @@ class ListReportViewModel(
                     val status = result.body()?.status
                     updateProtocolNumberUseCase.update(number = protocolNumber, id = protocol.id)
                     updateProtocolStatusUseCase.update(status = status, id = protocol.id)
-
                 }
             }
         }
@@ -97,6 +100,14 @@ class ListReportViewModel(
                 val status = result.body()?.status
                 updateProtocolStatusUseCase.update(status = status, id = id)
             }
+        }
+    }
+
+    private fun deleteProtocol(id: String?) {
+        _state.update { it.copy(protocols = null) }
+        viewModelScope.launch {
+            deleteReportUseCase.delete(id = id)
+            getAllProtocols()
         }
     }
 }

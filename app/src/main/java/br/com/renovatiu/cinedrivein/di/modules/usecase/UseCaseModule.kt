@@ -1,12 +1,14 @@
 package br.com.renovatiu.cinedrivein.di.modules.usecase
 
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.CreateProtocolUseCase
+import br.com.renovatiu.cinedrivein.domain.usecase.firestore.DeleteReportUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.GetAllDistributorsUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.GetAllProtocolUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.UpdateProtocolNumberUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.UpdateProtocolStatusUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.session.CreateSessionUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.session.DeleteAllSessionUseCase
+import br.com.renovatiu.cinedrivein.domain.usecase.session.DeleteSessionUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.session.GetAllSessionsUseCase
 import org.koin.dsl.module
 
@@ -56,6 +58,18 @@ val usecaseModule = module {
 
     factory {
         DeleteAllSessionUseCase(
+            repository = get()
+        )
+    }
+
+    factory {
+        DeleteReportUseCase(
+            repository = get()
+        )
+    }
+
+    factory {
+        DeleteSessionUseCase(
             repository = get()
         )
     }

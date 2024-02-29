@@ -1,5 +1,6 @@
 package br.com.renovatiu.cinedrivein.presentation.feature.report.create.viewmodel
 
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.renovatiu.cinedrivein.core.enums.Modality
@@ -17,26 +18,26 @@ import br.com.renovatiu.cinedrivein.data.remote.model.request.SessionRequest
 import br.com.renovatiu.cinedrivein.data.remote.model.request.TicketsSold
 import br.com.renovatiu.cinedrivein.domain.usecase.firestore.CreateProtocolUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.session.DeleteAllSessionUseCase
+import br.com.renovatiu.cinedrivein.domain.usecase.session.DeleteSessionUseCase
 import br.com.renovatiu.cinedrivein.domain.usecase.session.GetAllSessionsUseCase
 import br.com.renovatiu.cinedrivein.presentation.feature.report.create.action.CreateReportAction
 import br.com.renovatiu.cinedrivein.presentation.feature.report.create.state.CreateReportState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CreateReportViewModel(
     private val getAllSessionsUseCase: GetAllSessionsUseCase,
     private val createProtocolUseCase: CreateProtocolUseCase,
-    private val deleteAllSessionUseCase: DeleteAllSessionUseCase
+    private val deleteAllSessionUseCase: DeleteAllSessionUseCase,
+    private val deleteSessionUseCase: DeleteSessionUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateReportState())
     val state = _state.asStateFlow()
-
-    init {
-        getSessions()
-    }
 
     fun submitAction(action: CreateReportAction) {
         when(action) {
@@ -53,18 +54,37 @@ class CreateReportViewModel(
             }
 
             is CreateReportAction.CreateReport -> {
-                createReport()
+                createReport(deleteSessions = action.deleteSessions)
+            }
+
+            is CreateReportAction.GetSessions -> {
+                getSessions()
+            }
+
+            is CreateReportAction.DeleteAllSessions -> {
+                deleteAllSessions()
+            }
+
+            is CreateReportAction.OpenCloseDialog -> {
+                _state.update { it.copy(showDialog = !_state.value.showDialog) }
+            }
+
+            is CreateReportAction.DeleteSession -> {
+                deleteSession(id = action.id)
             }
         }
     }
 
     private fun getSessions()  {
+        _state.update { it.copy(sessions = null) }
+
         viewModelScope.launch {
             _state.update { it.copy(sessions = getAllSessionsUseCase.getAll()) }
         }
     }
 
-    private fun createReport() {
+    private fun createReport(deleteSessions: Boolean) {
+        _state.update { it.copy(requesting = true, showDialog = false) }
         val report = ReportRequest(
             ancineExhibitorCode = "5465",
             ancineRoomCode = "5002102",
@@ -87,12 +107,15 @@ class CreateReportViewModel(
         viewModelScope.launch {
             when(createProtocolUseCase.create(protocol = protocol)){
                 true -> {
-                    deleteAllSessionUseCase.deleteAll()
-                    _state.update { it.copy(saved = true) }
+                    if (deleteSessions) {
+                        deleteAllSessionUseCase.deleteAll()
+                    }
+                    delay(3000)
+                    _state.update { it.copy(saved = true, requesting = false) }
                 }
 
                 false -> {
-
+                    _state.update { it.copy( requesting = false) }
                 }
             }
         }
@@ -293,5 +316,21 @@ class CreateReportViewModel(
         }
 
         return sessionsRequest
+    }
+
+    private fun deleteAllSessions() {
+        viewModelScope.launch {
+            deleteAllSessionUseCase.deleteAll()
+            getSessions()
+        }
+    }
+
+    private fun deleteSession(id: Int?) {
+        id?.let {
+            viewModelScope.launch {
+                deleteSessionUseCase.delete(id = id)
+                getSessions()
+            }
+        }
     }
 }

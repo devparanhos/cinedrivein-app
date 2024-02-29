@@ -6,10 +6,14 @@ import java.time.LocalDate
 import java.util.Calendar
 import java.util.UUID
 
-fun extractMoviesName(sessions: List<SessionRequest>?) = sessions?.joinToString(
-    separator = ", ",
-    transform = { it.movies?.firstOrNull()?.title ?: "" }
-) ?: ""
+fun extractMoviesName(sessions: List<SessionRequest>?) : String {
+    val movies = sessions?.joinToString(
+        separator = ", ",
+        transform = { it.movies?.firstOrNull()?.title ?: "" }
+    ) ?: ""
+
+    return movies.ifEmpty { "Sem filmes" }
+}
 
 fun extractTicketsQuantity(sessions: List<SessionRequest>?) = sessions?.sumBy { session ->
     session.seats?.sumBy { seat ->
@@ -82,3 +86,4 @@ fun getMonthByString(month: String) : String {
         else  -> "0"
     }
 }
+

@@ -7,4 +7,5 @@ interface SessionRepository {
     suspend fun create(session: SessionDomain) : HandlerRequest
     suspend fun getAll() : List<SessionDomain>
     suspend fun deleteAll()
+    suspend fun deleteSession(id: Int)
 }

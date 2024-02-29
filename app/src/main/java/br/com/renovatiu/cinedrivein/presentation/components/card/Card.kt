@@ -1,16 +1,21 @@
 package br.com.renovatiu.cinedrivein.presentation.components.card
 
+import android.widget.TimePicker
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +23,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,16 +37,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import br.com.renovatiu.cinedrivein.R
 import br.com.renovatiu.cinedrivein.data.remote.model.request.DistributorRequest
 import br.com.renovatiu.cinedrivein.presentation.components.input.SelectInput
 import br.com.renovatiu.cinedrivein.ui.theme.LightGray
+import br.com.renovatiu.cinedrivein.ui.theme.Primary
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardSessionBasicData(
     sessionHour: String,
-    sessionHourChange: (hour: String) -> Unit,
+    selectTime: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -53,29 +62,62 @@ fun CardSessionBasicData(
         ) {
             Text(text = stringResource(id = R.string.title_basic_data))
             Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                value = sessionHour,
-                label = {
-                    Text(text = stringResource(id = R.string.label_session_hour))
-                },
-                onValueChange = {
-                    if (it.length <= 5) {
-                        sessionHourChange(it)
-                    }
-                },
-                placeholder = {
-                    Text(
-                        text = stringResource(id = R.string.placeholder_hour),
-                        color = LightGray
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    enabled = false,
+                    modifier = Modifier.weight(1.0f),
+                    value = sessionHour,
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.label_session_hour),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    },
+                    onValueChange = { null },
+                    placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.placeholder_hour),
+                            color = LightGray
+                        )
+                    },
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
                     )
-                },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
                 )
-            )
+                TextButton(
+                    modifier = Modifier.weight(1.0f),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = {
+                        selectTime()
+                    }
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.button_label_time),
+                            fontSize = 16.sp,
+                            color = Primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            tint = Primary,
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(id = R.drawable.ic_clock),
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
         }
     }
 }

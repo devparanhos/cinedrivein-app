@@ -24,10 +24,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,25 +43,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.renovatiu.cinedrivein.R
 import br.com.renovatiu.cinedrivein.core.extensions.setCnpjMask
+import br.com.renovatiu.cinedrivein.domain.model.SessionDomain
 import br.com.renovatiu.cinedrivein.presentation.components.card.CardSessionBasicData
 import br.com.renovatiu.cinedrivein.presentation.components.card.CardSessionMovieData
 import br.com.renovatiu.cinedrivein.presentation.components.card.CardSessionSeats
+import br.com.renovatiu.cinedrivein.presentation.components.content.ContentTimePicker
 import br.com.renovatiu.cinedrivein.presentation.components.topbar.DefaultTopBar
 import br.com.renovatiu.cinedrivein.presentation.feature.session.create.action.CreateSessionAction
 import br.com.renovatiu.cinedrivein.presentation.feature.session.create.viewmodel.CreateSessionViewModel
 import br.com.renovatiu.cinedrivein.ui.theme.LightGray
 import br.com.renovatiu.cinedrivein.ui.theme.Primary
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateSessionScreen(
+    toUpdate: Boolean? = false,
+    session: SessionDomain? = null,
     viewModel: CreateSessionViewModel = koinViewModel(),
     onReturn: () -> Unit
 ) {
+    var showClock by remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
-    
+
+    LaunchedEffect(true) {
+        session?.let {
+            viewModel.updateState(session = session)
+        }
+    }
+
     LaunchedEffect(state.saved) {
         if (state.saved) {
             onReturn()
@@ -74,26 +92,36 @@ fun CreateSessionScreen(
              )
         },
         bottomBar = {
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(54.dp),
-                shape = RoundedCornerShape(5.dp),
-                enabled = !state.isSaving,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Primary
-                ),
-                onClick = {
-                    viewModel.submitAction(
-                        action = CreateSessionAction.CreateSession
+            if (!showClock) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(54.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    enabled = !state.isSaving,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Primary
+                    ),
+                    onClick = {
+                        if (toUpdate == true) {
+                            viewModel.submitAction(
+                                action = CreateSessionAction.UpdateSession(
+                                    id = session?.id
+                                )
+                            )
+                        } else {
+                            viewModel.submitAction(
+                                action = CreateSessionAction.CreateSession
+                            )
+                        }
+                    }
+                ) {
+                    Text(
+                        text = if (toUpdate == true) "ATUALIZAR" else stringResource(id = R.string.button_label_register).uppercase(),
+                        fontSize = 16.sp
                     )
                 }
-            ) {
-                Text(
-                    text = stringResource(id = R.string.button_lable_register).uppercase(),
-                    fontSize = 16.sp
-                )
             }
         }
     ) { innerPadding ->
@@ -108,12 +136,8 @@ fun CreateSessionScreen(
                 item {
                     CardSessionBasicData(
                         sessionHour = state.sessionHour,
-                        sessionHourChange = { hour ->
-                            viewModel.submitAction(
-                                action = CreateSessionAction.UpdateSessionHour(
-                                    hour = hour
-                                )
-                            )
+                        selectTime = {
+                            showClock = true
                         }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -203,33 +227,53 @@ fun CreateSessionScreen(
             }
         }
         
-        if (state.isSaving) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Black.copy(alpha = 0.5f))
-                    .padding(horizontal = 24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Card(
+        when {
+            state.isSaving -> {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(54.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    )
+                        .fillMaxSize()
+                        .background(color = Color.Black.copy(alpha = 0.5f))
+                        .padding(horizontal = 24.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(54.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White
+                        )
                     ) {
-                        CircularProgressIndicator(color = Primary, modifier = Modifier.size(24.dp))
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(text = stringResource(id = R.string.loading_saving_session))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(color = Primary, modifier = Modifier.size(24.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(text = stringResource(id = R.string.loading_saving_session))
+                        }
                     }
                 }
+            }
+            
+            showClock -> {
+                ContentTimePicker(
+                    onConfirm = {
+                        showClock = false
+                        viewModel.submitAction(
+                            action = CreateSessionAction.UpdateSessionHour(
+                                hour = it
+                            )
+                        )
+                    },
+                    onCancel = {
+                        showClock = false
+                    }
+                )
             }
         }
     }

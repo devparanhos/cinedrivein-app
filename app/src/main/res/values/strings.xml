@@ -45,6 +45,12 @@
 
     <string name="loading_saving_session">Salvando sessão...</string>
 
-    <string name="button_lable_create_report">Criar relatório</string>
-    <string name="button_lable_register">Cadastrar</string>
+    <string name="button_label_create_report">Criar relatório</string>
+    <string name="button_label_register">Cadastrar</string>
+    <string name="button_label_confirm">Confirmar</string>
+    <string name="button_label_cancel">Cancelar</string>
+    <string name="button_label_time">Escolher horário</string>
+    <string name="button_label_date">Escolher data</string>
+
+
 </resources>

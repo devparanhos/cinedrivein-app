@@ -1,5 +1,6 @@
 package br.com.renovatiu.cinedrivein.di.modules.viewmodel
 
+import br.com.renovatiu.cinedrivein.domain.model.SessionDomain
 import br.com.renovatiu.cinedrivein.presentation.feature.report.create.viewmodel.CreateReportViewModel
 import br.com.renovatiu.cinedrivein.presentation.feature.report.list.viewmodel.ListReportViewModel
 import br.com.renovatiu.cinedrivein.presentation.feature.session.create.viewmodel.CreateSessionViewModel
@@ -12,7 +13,8 @@ val viewModelModule = module {
             ancineAPI = get(),
             getAllProtocolUseCase = get(),
             updateProtocolNumberUseCase = get(),
-            updateProtocolStatusUseCase = get()
+            updateProtocolStatusUseCase = get(),
+            deleteReportUseCase = get()
         )
     }
 
@@ -20,14 +22,16 @@ val viewModelModule = module {
         CreateReportViewModel(
             getAllSessionsUseCase = get(),
             createProtocolUseCase = get(),
-            deleteAllSessionUseCase = get()
+            deleteAllSessionUseCase = get(),
+            deleteSessionUseCase = get()
         )
     }
 
     viewModel {
         CreateSessionViewModel(
             createSessionUseCase = get(),
-            getAllDistributorsUseCase = get()
+            getAllDistributorsUseCase = get(),
+            deleteSessionUseCase = get()
         )
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -22,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import br.com.renovatiu.cinedrivein.data.remote.model.request.DistributorRequest
-import br.com.renovatiu.cinedrivein.ui.theme.LightGray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +58,6 @@ fun SelectInput(
             ),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.White,
-                placeholderColor = Color.Gray,
                 focusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier

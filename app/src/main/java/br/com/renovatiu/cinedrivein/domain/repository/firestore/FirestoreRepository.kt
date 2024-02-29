@@ -9,4 +9,5 @@ interface FirestoreRepository {
     suspend fun updateProtocolNumber(number: String?, id: String?)
     suspend fun updateProtocolStatus(status: String?, id: String?)
     suspend fun getAllDistributors() : List<DistributorRequest>
+    suspend fun deleteReport(id: String?)
 }

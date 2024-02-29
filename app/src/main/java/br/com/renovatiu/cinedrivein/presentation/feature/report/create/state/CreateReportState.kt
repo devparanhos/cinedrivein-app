@@ -7,5 +7,7 @@ data class CreateReportState(
     val date: String = "",
     val hasSession: Boolean = true,
     val isRectifing: Boolean = false,
-    val saved: Boolean = false
+    val saved: Boolean = false,
+    val showDialog: Boolean = false,
+    val requesting: Boolean = false
 )
